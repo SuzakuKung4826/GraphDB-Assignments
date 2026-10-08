@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import base64
 import html
+import re
 from functools import lru_cache
 from pathlib import Path
 
@@ -25,6 +26,8 @@ GH = "https://github.com/SuzakuKung4826"
 MANGA_REPO = f"{GH}/MangaGraph"
 NB = f"{MANGA_REPO}/blob/main/homework"
 COLAB = "https://colab.research.google.com/github/SuzakuKung4826/MangaGraph/blob/main/homework"
+HUB_REPO = f"{GH}/GraphDB-Assignments"
+REPORTS = f"{HUB_REPO}/blob/main/reports"
 
 STUDENT = {
     "name": "นายจิรภัทร จันทร์มล",
@@ -43,6 +46,58 @@ ASSIGNMENTS = [
     {
         "no": "HW 01",
         "kind": "hw",
+        "title": "Assignment 1 — วิเคราะห์ Workload เพื่อเลือกฐานข้อมูล",
+        "tag": "Data Modeling · Polyglot",
+        "status": "live",
+        "image": "a1.jpg",
+        "desc": "เลือกฐานข้อมูลให้เหมาะกับ workload 5 ระบบ เทียบ Table กับ Graph ออกแบบ Social Graph "
+                "สำหรับ Mini Project และวิเคราะห์ 3 แอปพลิเคชันแบบ Polyglot Persistence",
+        "learned": ["Relational / Document / Graph", "SQL JOIN vs Cypher", "ออกแบบ Social Graph",
+                    "Polyglot Persistence"],
+        "links": [
+            ("📄 ดูรายงาน (PDF)", f"{REPORTS}/Assignment1_664245026.pdf"),
+        ],
+    },
+    {
+        "no": "HW 02",
+        "kind": "hw",
+        "title": "Assignment 2 — Transaction, Concurrency & Recovery",
+        "tag": "MySQL · InnoDB",
+        "status": "live",
+        "image": None,
+        "code": (
+            "START TRANSACTION;\n"
+            "SELECT * FROM posts\n"
+            "  WHERE post_id = %s FOR UPDATE;\n"
+            "INSERT INTO reports VALUES (...);\n"
+            "UPDATE posts SET report_count =\n"
+            "  report_count + 1;  COMMIT;"
+        ),
+        "desc": "Lab สัปดาห์ที่ 2 ทดลองบน MySQL ผ่าน Python: dirty read, atomic transaction, "
+                "autocommit vs explicit, deadlock + retry, isolation level และ redo/undo log",
+        "learned": ["ACID", "Locking + MVCC", "Isolation Level", "Deadlock & Retry", "Redo / Undo"],
+        "links": [
+            ("📂 เปิดใน Google Drive", "https://drive.google.com/file/d/1-LYLigMgURWqnDd925X0xamGXVh8Tuh6/view?usp=sharing"),
+            ("📄 ดูรายงาน (PDF)", f"{REPORTS}/Assignment2_664245026.pdf"),
+        ],
+    },
+    {
+        "no": "HW 03",
+        "kind": "hw",
+        "title": "Club System — ระบบแนะนำหนังสือและชมรมด้วย Cypher",
+        "tag": "Neo4j · Cypher",
+        "status": "live",
+        "image": "club.jpg",
+        "desc": "สร้างกราฟนักเรียน หนังสือ หมวดหนังสือ และชมรมบน Neo4j แล้วใช้ traversal 1–2 hop "
+                "ผ่าน FRIEND_OF แนะนำหนังสือและชมรมที่เพื่อนเป็นสมาชิก",
+        "learned": ["CREATE CONSTRAINT", "Traversal 1–2 hop", "count(DISTINCT)", "WHERE NOT EXISTS"],
+        "links": [
+            ("📄 ดูรายงาน (PDF)", f"{REPORTS}/664245026_Club_System.pdf"),
+        ],
+    },
+    {
+        "no": "HW 04",
+        "kind": "hw",
         "title": "Manga Recommender ด้วย NetworkX",
         "tag": "NetworkX · Python",
         "status": "live",
@@ -56,7 +111,7 @@ ASSIGNMENTS = [
         ],
     },
     {
-        "no": "HW 02",
+        "no": "HW 05",
         "kind": "hw",
         "title": "Manga Recommender ด้วย Neo4j Aura",
         "tag": "Neo4j · Cypher",
@@ -106,9 +161,10 @@ CHECKLIST = [
     ("ไฟล์ PowerPoint อยู่ใน GitHub",
      "slides/MangaGraph_Presentation.pptx", f"{MANGA_REPO}/tree/main/slides"),
     ("การบ้านทุกชิ้นอยู่ใน GitHub",
-     "homework/ — HW1 NetworkX, HW2 Neo4j", f"{MANGA_REPO}/tree/main/homework"),
+     "reports/ — Assignment 1, 2, Club System · MangaGraph/homework/ — NetworkX, Neo4j",
+     f"{HUB_REPO}/tree/main/reports"),
     ("หน้า index ลิงก์ไปการบ้านทุกชิ้น",
-     "หน้านี้ + README ของ repo", f"{GH}/GraphDB-Assignments"),
+     "หน้านี้ + README ของ repo", HUB_REPO),
 ]
 
 # ---------------------------------------------------------------------------
@@ -255,11 +311,11 @@ st.markdown(
     f"""
 <div class="hero"><div class="hero-grid">
   <div style="flex:1;min-width:280px">
-    <span class="kicker">GRAPH DATABASE · COURSEWORK</span>
+    <span class="kicker">ADVANCED DATABASE SYSTEMS · ระบบฐานข้อมูลขั้นสูง</span>
     <h1>GRAPH DB <span>ASSIGNMENTS</span></h1>
-    <div class="sub">รวมการบ้านและโปรเจกต์ระบบแนะนำมังงะด้วยกราฟ</div>
-    <p>เริ่มจากกราฟใน Python ด้วย NetworkX → ย้ายขึ้นฐานข้อมูลกราฟ Neo4j Aura ด้วย Cypher →
-       จบด้วยเว็บไซต์แนะนำมังงะที่อธิบายเหตุผลได้</p>
+    <div class="sub">รวมการบ้านและโปรเจกต์ วิชาระบบฐานข้อมูลขั้นสูง</div>
+    <p>ตั้งแต่เลือกฐานข้อมูลให้เหมาะกับ workload → Transaction &amp; Recovery บน MySQL →
+       Cypher บน Neo4j → จบด้วยเว็บไซต์แนะนำมังงะด้วย Graph Database</p>
   </div>
   <div class="me">
     <img src="{img_uri('profile.jpg')}" alt="profile">
@@ -297,14 +353,22 @@ def section(title: str, pill: str) -> None:
                 f'<span class="rule"></span></div>', unsafe_allow_html=True)
 
 
-def highlight_cypher(code: str) -> str:
-    """ใส่สีคีย์เวิร์ด Cypher แบบง่าย ๆ"""
-    out = e(code)
-    for kw in ("MATCH", "WHERE", "NOT", "RETURN", "ORDER BY", "DESC", "LIMIT", "AS", "count"):
-        out = out.replace(kw + " ", f'<span class="k">{kw}</span> ').replace(kw + "(", f'<span class="k">{kw}</span>(')
-    for lab in (":User", ":Manga", ":LIKES"):
-        out = out.replace(lab, f'<span class="c">{lab}</span>')
-    return out.replace("&#x27;Bank&#x27;", '<span class="s">&#x27;Bank&#x27;</span>')
+KEYWORDS = ("MATCH", "WHERE", "NOT", "EXISTS", "RETURN", "ORDER", "BY", "DESC", "LIMIT", "AS", "count",
+            "START", "TRANSACTION", "SELECT", "FROM", "FOR", "UPDATE", "INSERT", "INTO", "VALUES", "SET",
+            "COMMIT", "ROLLBACK")
+TOKEN = re.compile(r"('[^']*')|(:[A-Z_][A-Za-z_]*)|\b(" + "|".join(KEYWORDS) + r")\b")
+
+
+def highlight_code(code: str) -> str:
+    """ใส่สีโค้ด Cypher/SQL แบบง่าย ๆ: keyword = แดง, label = ส้ม, string = เขียว"""
+    out, pos = [], 0
+    for m in TOKEN.finditer(code):
+        out.append(e(code[pos:m.start()]))
+        cls = "s" if m.group(1) else "c" if m.group(2) else "k"
+        out.append(f'<span class="{cls}">{e(m.group(0))}</span>')
+        pos = m.end()
+    out.append(e(code[pos:]))
+    return "".join(out)
 
 
 def card(i: int, a: dict) -> None:
@@ -312,7 +376,7 @@ def card(i: int, a: dict) -> None:
         if a.get("image"):
             visual = f'<img src="{img_uri(a["image"])}" alt="{e(a["title"])}">'
         else:
-            lines = "".join(f"<div>{ln or '&nbsp;'}</div>" for ln in highlight_cypher(a.get("code", "")).split("\n"))
+            lines = "".join(f"<div>{ln or '&nbsp;'}</div>" for ln in highlight_code(a.get("code", "")).split("\n"))
             visual = f'<div class="code">{lines}</div>'
         no_cls = "no final" if a["kind"] == "project" else "no"
         status = ('<span class="badge live">● ส่งแล้ว</span>' if a["status"] == "live"
@@ -340,10 +404,12 @@ choice = st.segmented_control(
 kind = {"การบ้าน": "hw", "โปรเจกต์": "project"}.get(choice or "ทั้งหมด")
 shown = [(i, a) for i, a in enumerate(ASSIGNMENTS) if kind is None or a["kind"] == kind]
 
-cols = st.columns(3, gap="large")
-for pos, (i, a) in enumerate(shown):
-    with cols[pos % 3]:
-        card(i, a)
+# วางทีละแถว แถวละ 3 การ์ด ให้ขอบบนของแต่ละแถวตรงกัน
+for start in range(0, len(shown), 3):
+    cols = st.columns(3, gap="large")
+    for col, (i, a) in zip(cols, shown[start:start + 3]):
+        with col:
+            card(i, a)
 
 # ---------------------------------------------------------------------------
 # Checklist งานที่อาจารย์สั่ง

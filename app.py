@@ -77,7 +77,7 @@ ASSIGNMENTS = [
                 "autocommit vs explicit, deadlock + retry, isolation level และ redo/undo log",
         "learned": ["ACID", "Locking + MVCC", "Isolation Level", "Deadlock & Retry", "Redo / Undo"],
         "links": [
-            ("📂 เปิดใน Google Drive", "https://drive.google.com/file/d/1-LYLigMgURWqnDd925X0xamGXVh8Tuh6/view?usp=sharing"),
+            ("▶ เปิดใน Google Colab", "https://colab.research.google.com/drive/1-LYLigMgURWqnDd925X0xamGXVh8Tuh6?authuser=6"),
             ("📄 ดูรายงาน (PDF)", f"{REPORTS}/Assignment2_664245026.pdf"),
         ],
     },
